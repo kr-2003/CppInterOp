@@ -1323,8 +1323,9 @@ TEST(FunctionReflectionTest, GetFunctionAddress) {
 #endif
   std::vector<Decl*> Decls, SubDecls;
   std::string code = "int f1(int i) { return i * i; }";
+  std::vector<const char*> interpreter_args = {"-include", "new"};
 
-  GetAllTopLevelDecls(code, Decls);
+  GetAllTopLevelDecls(code, Decls, false, interpreter_args);
 
   testing::internal::CaptureStdout();
   Interp->declare("#include <iostream>");
