@@ -130,13 +130,14 @@ if(EMSCRIPTEN)
     PRIVATE "SHELL: -s WASM_BIGINT"
     PRIVATE "SHELL: -s SIDE_MODULE=1"
     PRIVATE "SHELL: ${SYMBOLS_LIST}"
+    PRIVATE "SHELL: -s -O1"
   )
   if (CPPINTEROP_ENABLE_TESTING)
-    # When compiling Emscripten tests the shared library it links to is expected to be in the same folder as the compiled Javascript
-    add_custom_command(TARGET clangCppInterOp POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:clangCppInterOp> ${CMAKE_BINARY_DIR}/unittests/CppInterOp/
-    )
-  endif(CPPINTEROP_ENABLE_TESTING)
+  # When compiling Emscripten tests the shared library it links to is expected to be in the same folder as the compiled Javascript
+  add_custom_command(TARGET clangCppInterOp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:clangCppInterOp> ${CMAKE_BINARY_DIR}/unittests/CppInterOp/
+  )
+endif(CPPINTEROP_ENABLE_TESTING)
 
 endif()
 
