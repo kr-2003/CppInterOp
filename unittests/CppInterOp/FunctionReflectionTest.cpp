@@ -1721,8 +1721,8 @@ TEST(FunctionReflectionTest, Construct) {
 #ifdef _WIN32
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
-
-  Cpp::CreateInterpreter();
+  std::vector<const char*> interpreter_args = {"-include", "new"};
+  Cpp::CreateInterpreter(interpreter_args);
 
   Interp->declare(R"(
     #include <new>
@@ -1783,7 +1783,8 @@ TEST(FunctionReflectionTest, ConstructNested) {
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
 
-  Cpp::CreateInterpreter();
+  std::vector<const char*> interpreter_args = {"-include", "new"};
+  Cpp::CreateInterpreter(interpreter_args);
 
   Interp->declare(R"(
     #include <new>
@@ -1843,7 +1844,8 @@ TEST(FunctionReflectionTest, Destruct) {
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
 
-  Cpp::CreateInterpreter();
+  std::vector<const char*> interpreter_args = {"-include", "new"};
+  Cpp::CreateInterpreter(interpreter_args);
 
   Interp->declare(R"(
     #include <new>
