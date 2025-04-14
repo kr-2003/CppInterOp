@@ -5,6 +5,7 @@
 
 #include "llvm/Support/Valgrind.h"
 #include <memory>
+#include <string>
 #include <vector>
 #include "clang-c/CXCppInterOp.h"
 #include "clang-c/CXString.h"
@@ -20,7 +21,7 @@ namespace TestUtils {
 void GetAllTopLevelDecls(const std::string& code,
                          std::vector<clang::Decl*>& Decls,
                          bool filter_implicitGenerated = false,
-                         std::vector<const char*> interpreter_args = {});
+                         const std::vector<const char*> interpreter_args = {});
 void GetAllSubDecls(clang::Decl* D, std::vector<clang::Decl*>& SubDecls,
                     bool filter_implicitGenerated = false);
 } // end namespace TestUtils
