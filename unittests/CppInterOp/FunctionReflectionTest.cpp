@@ -1416,7 +1416,7 @@ TEST(FunctionReflectionTest, GetFunctionCallWrapper) {
 
   std::vector<const char*> interpreter_args = {"-include", "new"};
 
-  GetAllTopLevelDecls(code, Decls);
+  GetAllTopLevelDecls(code, Decls, false, interpreter_args);
 
   Interp->process(R"(
     #include <string>
