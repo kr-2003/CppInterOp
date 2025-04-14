@@ -168,7 +168,9 @@ TEST(ScopeReflectionTest, IsBuiltin) {
   //  "int", "unsigned int", "long", "unsigned long", "long long", "unsigned long long",
   //  "float", "double", "long double", "void"}
 
-  Cpp::CreateInterpreter();
+  std::vector<const char*> interpreter_args = { "-include", "new" };
+
+  Cpp::CreateInterpreter(interpreter_args);
   ASTContext &C = Interp->getCI()->getASTContext();
   EXPECT_TRUE(Cpp::IsBuiltin(C.BoolTy.getAsOpaquePtr()));
   EXPECT_TRUE(Cpp::IsBuiltin(C.CharTy.getAsOpaquePtr()));
