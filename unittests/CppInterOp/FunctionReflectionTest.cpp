@@ -1372,7 +1372,9 @@ TEST(FunctionReflectionTest, JitCallAdvanced) {
       } name;
     )";
 
-  GetAllTopLevelDecls(code, Decls);
+  std::vector<const char*> vargs = {"-include", "new"};
+
+  GetAllTopLevelDecls(code, Decls, false, vargs);
   auto *CtorD
     = (clang::CXXConstructorDecl*)Cpp::GetDefaultConstructor(Decls[0]);
   auto Ctor = Cpp::MakeFunctionCallable(CtorD);
@@ -1409,6 +1411,8 @@ TEST(FunctionReflectionTest, GetFunctionCallWrapper) {
   std::string code = R"(
     int f1(int i) { return i * i; }
     )";
+
+  std::vector<const char*> interpreter_args = {"-include", "new"};
 
   GetAllTopLevelDecls(code, Decls);
 
@@ -1510,7 +1514,7 @@ TEST(FunctionReflectionTest, GetFunctionCallWrapper) {
         };
     )";
 
-  GetAllTopLevelDecls(code1, Decls1);
+  GetAllTopLevelDecls(code1, Decls1, false, interpreter_args);
   ASTContext& C = Interp->getCI()->getASTContext();
 
   std::vector<Cpp::TemplateArgInfo> argument = {C.IntTy.getAsOpaquePtr()};
