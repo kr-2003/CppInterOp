@@ -1372,9 +1372,9 @@ TEST(FunctionReflectionTest, JitCallAdvanced) {
       } name;
     )";
 
-  std::vector<const char*> vargs = {"-include", "new"};
+  std::vector<const char*> interpreter_args = {"-include", "new"};
 
-  GetAllTopLevelDecls(code, Decls, false, vargs);
+  GetAllTopLevelDecls(code, Decls, false, interpreter_args);
   auto *CtorD
     = (clang::CXXConstructorDecl*)Cpp::GetDefaultConstructor(Decls[0]);
   auto Ctor = Cpp::MakeFunctionCallable(CtorD);
