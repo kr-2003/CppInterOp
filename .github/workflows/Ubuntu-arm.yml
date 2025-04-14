@@ -1,8 +1,6 @@
 name: Ubuntu-arm
 
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
   release:

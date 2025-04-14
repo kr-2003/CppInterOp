@@ -1030,6 +1030,8 @@ TEST(ScopeReflectionTest, IncludeVector) {
     #include <vector>
     #include <iostream>
   )";
+  std::vector<const char*> interpreter_args = {"-include", "new"};
+  Cpp::CreateInterpreter(interpreter_args);
   Interp->declare(code);
 }
 

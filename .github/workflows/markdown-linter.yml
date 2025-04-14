@@ -1,12 +1,6 @@
 ---
 name: Markdown-Linter
 
-on:
-  pull_request:
-    branches: [main]
-    paths:
-      - '**.md'
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true

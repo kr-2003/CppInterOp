@@ -1,11 +1,5 @@
 name: Post clang-tidy review comments
 
-on:
-  workflow_run:
-    workflows: ["clang-tidy-review"]
-    types:
-      - completed
-
 permissions:
   checks: write
   pull-requests: write
