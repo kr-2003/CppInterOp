@@ -505,7 +505,10 @@ TEST(ScopeReflectionTest, GetNamed) {
                         }
                         }
                        )";
-  Cpp::CreateInterpreter();
+
+  std::vector<const char*> interpreter_args = {"-include", "new"};
+
+  Cpp::CreateInterpreter(interpreter_args);
 
   Interp->declare(code);
   Cpp::TCppScope_t ns_N1 = Cpp::GetNamed("N1", nullptr);
