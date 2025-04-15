@@ -167,7 +167,7 @@ TEST(InterpreterTest, CreateInterpreter) {
 }
 
 TEST(InterpreterTest, CreateInterpreterCAPI) {
-#ifdef CPPINTEROP_USE_CLANG
+#ifdef CPPINTEROP_USE_CLING
   GTEST_SKIP() << "C API is not available in this build";
 #endif
   // C API
@@ -179,7 +179,7 @@ TEST(InterpreterTest, CreateInterpreterCAPI) {
 }
 
 TEST(InterpreterTest, CreateInterpreterCAPIFailure) {
-#ifdef CPPINTEROP_USE_CLANG
+#ifdef CPPINTEROP_USE_CLING
   GTEST_SKIP() << "C API is not available in this build";
 #endif
   const char* argv[] = {"-fsyntax-only", "-Xclang", "-invalid-plugin"};
