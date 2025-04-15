@@ -183,7 +183,9 @@ TEST(InterpreterTest, CreateInterpreterCAPIFailure) {
   GTEST_SKIP() << "C API is not available in this build";
 #endif
   const char* argv[] = {"-fsyntax-only", "-Xclang", "-invalid-plugin"};
+  testing::internal::CaptureStderr(); // Suppress error messages
   auto *CXI = clang_createInterpreter(argv, 3);
+  std::string capturedStderr = testing::internal::GetCapturedStderr();
   EXPECT_EQ(CXI, nullptr);
 }
 
