@@ -166,6 +166,29 @@ TEST(InterpreterTest, CreateInterpreter) {
 #endif
 }
 
+TEST(InterpreterTest, CreateInterpreterCAPI) {
+#ifdef CPPINTEROP_USE_CLING
+  GTEST_SKIP() << "C API is not available in this build";
+#endif
+  // C API
+  const char* argv[] = {"-std=c++17"};
+  auto *CXI = clang_createInterpreter(argv, 1);
+  auto CLI = clang_Interpreter_getClangInterpreter(CXI);
+  EXPECT_TRUE(CLI);
+  clang_Interpreter_dispose(CXI);
+}
+
+TEST(InterpreterTest, CreateInterpreterCAPIFailure) {
+#ifdef CPPINTEROP_USE_CLING
+  GTEST_SKIP() << "C API is not available in this build";
+#endif
+  const char* argv[] = {"-fsyntax-only", "-Xclang", "-invalid-plugin"};
+  testing::internal::CaptureStderr(); // Suppress error messages
+  auto *CXI = clang_createInterpreter(argv, 3);
+  std::string capturedStderr = testing::internal::GetCapturedStderr();
+  EXPECT_EQ(CXI, nullptr);
+}
+
 #ifdef LLVM_BINARY_DIR
 TEST(InterpreterTest, DetectResourceDir) {
 #ifdef EMSCRIPTEN
