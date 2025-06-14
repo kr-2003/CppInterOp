@@ -36,7 +36,7 @@ TEST(InterpreterTest, DISABLED_DebugFlag) {
 #else
 TEST(InterpreterTest, DebugFlag) {
 #endif // NDEBUG
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   EXPECT_FALSE(Cpp::IsDebugOutputEnabled());
   std::string cerrs;
   testing::internal::CaptureStderr();
@@ -81,9 +81,9 @@ TEST(InterpreterTest, Evaluate) {
 }
 
 TEST(InterpreterTest, DeleteInterpreter) {
-  auto* I1 = Cpp::CreateInterpreter();
-  auto* I2 = Cpp::CreateInterpreter();
-  auto* I3 = Cpp::CreateInterpreter();
+  auto* I1 = Cpp::CreateInterpreter({}, {}, true);
+  auto* I2 = Cpp::CreateInterpreter({}, {}, true);
+  auto* I3 = Cpp::CreateInterpreter({}, {}, true);
   EXPECT_TRUE(I1 && I2 && I3) << "Failed to create interpreters";
 
   EXPECT_EQ(I3, Cpp::GetInterpreter()) << "I3 is not active";
@@ -100,9 +100,9 @@ TEST(InterpreterTest, DeleteInterpreter) {
 
 TEST(InterpreterTest, ActivateInterpreter) {
   EXPECT_FALSE(Cpp::ActivateInterpreter(nullptr));
-  auto* Cpp14 = Cpp::CreateInterpreter({"-std=c++14"});
-  auto* Cpp17 = Cpp::CreateInterpreter({"-std=c++17"});
-  auto* Cpp20 = Cpp::CreateInterpreter({"-std=c++20"});
+  auto* Cpp14 = Cpp::CreateInterpreter({"-std=c++14"}, {}, true);
+  auto* Cpp17 = Cpp::CreateInterpreter({"-std=c++17"}, {}, true);
+  auto* Cpp20 = Cpp::CreateInterpreter({"-std=c++20"}, {}, true);
 
   EXPECT_TRUE(Cpp14 && Cpp17 && Cpp20);
   EXPECT_TRUE(Cpp::Evaluate("__cplusplus") == 202002L)
@@ -128,7 +128,7 @@ TEST(InterpreterTest, Process) {
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";
   std::vector<const char*> interpreter_args = { "-include", "new" };
-  auto* I = Cpp::CreateInterpreter(interpreter_args);
+  auto* I = Cpp::CreateInterpreter(interpreter_args, {}, true);
   EXPECT_TRUE(Cpp::Process("") == 0);
   EXPECT_TRUE(Cpp::Process("int a = 12;") == 0);
   EXPECT_FALSE(Cpp::Process("error_here;") == 0);
@@ -160,7 +160,7 @@ TEST(InterpreterTest, EmscriptenExceptionHandling) {
     "-mllvm", "-enable-emscripten-sjlj"
   };
 
-  Cpp::CreateInterpreter(Args);
+  Cpp::CreateInterpreter(Args, {}, true);
 
   const char* tryCatchCode = R"(
     try {
@@ -174,7 +174,7 @@ TEST(InterpreterTest, EmscriptenExceptionHandling) {
 }
 
 TEST(InterpreterTest, CreateInterpreter) {
-  auto* I = Cpp::CreateInterpreter();
+  auto* I = Cpp::CreateInterpreter({}, {}, true);
   EXPECT_TRUE(I);
   // Check if the default standard is c++14
 
@@ -186,7 +186,7 @@ TEST(InterpreterTest, CreateInterpreter) {
   EXPECT_TRUE(Cpp::GetNamed("cpp14"));
   EXPECT_FALSE(Cpp::GetNamed("cppUnknown"));
 
-  I = Cpp::CreateInterpreter({"-std=c++17"});
+  I = Cpp::CreateInterpreter({"-std=c++17"}, {}, true);
   Cpp::Declare("#if __cplusplus==201703L\n"
                    "int cpp17() { return 2017; }\n"
                    "#else\n"
@@ -238,7 +238,7 @@ TEST(InterpreterTest, DISABLED_DetectResourceDir) {
 #ifdef _WIN32
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   EXPECT_STRNE(Cpp::DetectResourceDir().c_str(), Cpp::GetResourceDir());
   llvm::SmallString<256> Clang(LLVM_BINARY_DIR);
   llvm::sys::path::append(Clang, "bin", "clang");
@@ -288,7 +288,7 @@ TEST(InterpreterTest, IncludePaths) {
 
 TEST(InterpreterTest, CodeCompletion) {
 #if CLANG_VERSION_MAJOR >= 18 || defined(CPPINTEROP_USE_CLING)
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   std::vector<std::string> cc;
   Cpp::Declare("int foo = 12;");
   Cpp::CodeComplete(cc, "f", 1, 2);

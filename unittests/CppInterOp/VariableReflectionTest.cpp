@@ -180,7 +180,7 @@ TEST(VariableReflectionTest, GetTypeAsString) {
   }
   )";
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   EXPECT_EQ(Cpp::Declare(code.c_str()), 0);
 
   Cpp::TCppScope_t wrapper =
@@ -343,7 +343,7 @@ TEST(VariableReflectionTest, VariableOffsetsWithInheritance) {
     GTEST_SKIP() << "XFAIL due to Valgrind report";
 
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
 
   Cpp::Declare("#include<string>");
 
@@ -520,7 +520,7 @@ TEST(VariableReflectionTest, StaticConstExprDatamember) {
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
 
   Cpp::Declare(R"(
   class MyClass {
@@ -592,7 +592,7 @@ TEST(VariableReflectionTest, StaticConstExprDatamember) {
 }
 
 TEST(VariableReflectionTest, GetEnumConstantDatamembers) {
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
 
   Cpp::Declare(R"(
   class MyEnumClass {
@@ -616,7 +616,7 @@ TEST(VariableReflectionTest, GetEnumConstantDatamembers) {
 }
 
 TEST(VariableReflectionTest, Is_Get_Pointer) {
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   std::vector<Decl*> Decls;
   std::string code = R"(
   class A {};
@@ -648,7 +648,7 @@ TEST(VariableReflectionTest, Is_Get_Pointer) {
 }
 
 TEST(VariableReflectionTest, Is_Get_Reference) {
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   std::vector<Decl*> Decls;
   std::string code = R"(
   class A {};

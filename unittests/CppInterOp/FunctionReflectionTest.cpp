@@ -645,7 +645,7 @@ TEST(FunctionReflectionTest, InstantiateTemplateFunctionFromString) {
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";
   std::vector<const char*> interpreter_args = { "-include", "new" };
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
   std::string code = R"(#include <memory>)";
   Interp->process(code);
   const char* str = "std::make_unique<int,int>";
@@ -1927,7 +1927,7 @@ TEST(FunctionReflectionTest, Construct) {
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
 #endif
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
 
   Interp->declare(R"(
     #include <new>
@@ -1991,7 +1991,7 @@ TEST(FunctionReflectionTest, ConstructNested) {
 #endif
 
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
 
   Interp->declare(R"(
     #include <new>
@@ -2052,7 +2052,7 @@ TEST(FunctionReflectionTest, Destruct) {
 #endif
 
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
 
   Interp->declare(R"(
     #include <new>
@@ -2104,7 +2104,7 @@ TEST(FunctionReflectionTest, UndoTest) {
 #ifdef EMSCRIPTEN
   GTEST_SKIP() << "Test fails for Emscipten builds";
 #else
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   EXPECT_EQ(Cpp::Process("int a = 5;"), 0);
   EXPECT_EQ(Cpp::Process("int b = 10;"), 0);
   EXPECT_EQ(Cpp::Process("int x = 5;"), 0);

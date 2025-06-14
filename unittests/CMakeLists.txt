@@ -51,7 +51,7 @@ endfunction()
 
 add_subdirectory(CppInterOp)
 
-add_custom_target(check-cppinterop COMMAND ${CMAKE_CTEST_COMMAND} -V --build-config $<CONFIG>
+add_custom_target(check-cppinterop COMMAND ${CMAKE_CTEST_COMMAND} -V
   DEPENDS CppInterOpUnitTests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set_target_properties(check-cppinterop PROPERTIES FOLDER "CppInterOp tests")

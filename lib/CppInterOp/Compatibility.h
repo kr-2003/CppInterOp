@@ -79,6 +79,7 @@ static inline char* GetEnv(const char* Var_Name) {
 
 // std::regex breaks pytorch's jit: pytorch/pytorch#49460
 #include "llvm/Support/Regex.h"
+#include "llvm/ExecutionEngine/Orc/ExecutionUtils.h"
 
 #ifdef CPPINTEROP_USE_CLING
 
@@ -282,6 +283,24 @@ createClangInterpreter(std::vector<const char*>& args, bool is_out_of_process) {
                                 "Failed to build Interpreter:");
     return nullptr;
   }
+  // auto interpreter = std::move(*innerOrErr);
+
+  // // Add your hardcoded static library
+  // auto JOrErr = interpreter->getExecutionEngine();
+  // if (!JOrErr) {
+  //   llvm::logAllUnhandledErrors(JOrErr.takeError(), llvm::errs(),
+  //                              "Failed to get execution engine:");
+  //   return nullptr;
+  // }
+  // auto& J = *JOrErr;
+  // std::string libpath = "/Users/abhinavkumar/Desktop/Coding/CERN_HSF_COMPILER_RESEARCH/llvm-project-test/build/lib/libclangInterpreter.a";
+  // auto generator = ExitOnError(
+  //     llvm::orc::StaticLibraryDefinitionGenerator::Load(
+  //         J.getObjLinkingLayer(), 
+  //         libpath.c_str()
+  //     )
+  // );
+  // J.getMainJITDylib().addGenerator(std::move(generator));
   if (CudaEnabled) {
     if (auto Err = (*innerOrErr)->LoadDynamicLibrary("libcudart.so")) {
       llvm::logAllUnhandledErrors(std::move(Err), llvm::errs(),
@@ -291,6 +310,7 @@ createClangInterpreter(std::vector<const char*>& args, bool is_out_of_process) {
   }
 
   return std::move(*innerOrErr);
+  // return interpreter;
 }
 
 inline void maybeMangleDeclName(const clang::GlobalDecl& GD,
