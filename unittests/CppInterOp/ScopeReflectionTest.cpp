@@ -175,7 +175,7 @@ TEST(ScopeReflectionTest, IsBuiltin) {
 
   std::vector<const char*> interpreter_args = { "-include", "new" };
 
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
   ASTContext &C = Interp->getCI()->getASTContext();
   EXPECT_TRUE(Cpp::IsBuiltin(C.BoolTy.getAsOpaquePtr()));
   EXPECT_TRUE(Cpp::IsBuiltin(C.CharTy.getAsOpaquePtr()));
@@ -465,7 +465,7 @@ TEST(ScopeReflectionTest, GetScope) {
                         typedef N::C T;
                        )";
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
   Interp->declare(code);
   Cpp::TCppScope_t tu = Cpp::GetScope("", 0);
   Cpp::TCppScope_t ns_N = Cpp::GetScope("N", 0);
@@ -490,7 +490,7 @@ TEST(ScopeReflectionTest, GetScopefromCompleteName) {
                         }
                        )";
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
 
   Interp->declare(code);
   EXPECT_EQ(Cpp::GetQualifiedName(Cpp::GetScopeFromCompleteName("N1")), "N1");
@@ -517,7 +517,7 @@ TEST(ScopeReflectionTest, GetNamed) {
 
   std::vector<const char*> interpreter_args = {"-include", "new"};
 
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
 
   Interp->declare(code);
   Cpp::TCppScope_t ns_N1 = Cpp::GetNamed("N1", nullptr);
@@ -556,7 +556,7 @@ TEST(ScopeReflectionTest, GetParentScope) {
                         }
                        )";
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
 
   Interp->declare(code);
   Cpp::TCppScope_t ns_N1 = Cpp::GetNamed("N1");
@@ -895,7 +895,7 @@ TEST(ScopeReflectionTest, InstantiateTemplateFunctionFromString) {
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
   std::string code = R"(#include <memory>)";
   Interp->process(code);
   const char* str = "std::make_unique<int,int>";
@@ -1044,7 +1044,7 @@ TEST(ScopeReflectionTest, IncludeVector) {
     #include <iostream>
   )";
   std::vector<const char*> interpreter_args = {"-include", "new"};
-  Cpp::CreateInterpreter(interpreter_args);
+  Cpp::CreateInterpreter(interpreter_args, {}, true);
   Interp->declare(code);
 }
 
@@ -1052,7 +1052,7 @@ TEST(ScopeReflectionTest, GetOperator) {
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";
 
-  Cpp::CreateInterpreter();
+  Cpp::CreateInterpreter({}, {}, true);
 
   std::string code = R"(
     class MyClass {
