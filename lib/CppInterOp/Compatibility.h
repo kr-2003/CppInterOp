@@ -206,6 +206,7 @@ inline void codeComplete(std::vector<std::string>& Results,
 #include "llvm/Support/Error.h"
 
 #include <vector>
+#include <unistd.h>
 
 #ifdef CPPINTEROP_WITH_OOP_JIT
 #include "clang/Basic/Version.h"
@@ -218,6 +219,10 @@ inline void codeComplete(std::vector<std::string>& Results,
 static const llvm::ExitOnError ExitOnError;
 
 namespace compat {
+
+static int m_child_stdout_fd = -1;
+static int m_child_stderr_fd = -1;
+// static int m_child_stdin_fd = -1;
 
 inline std::unique_ptr<clang::Interpreter>
 createClangInterpreter(std::vector<const char*>& args, bool outOfProcess) {
@@ -268,8 +273,25 @@ createClangInterpreter(std::vector<const char*>& args, bool outOfProcess) {
     bool UseSharedMemory = false;
     std::string SlabAllocateSizeString = "";
     std::unique_ptr<llvm::orc::ExecutorProcessControl> EPC;
+    
+    // Create pipes for child process I/O control
+    int stdout_pipe[2], stderr_pipe[2], stdin_pipe[2];
+    if (pipe(stdout_pipe) != 0 || pipe(stderr_pipe) != 0 || pipe(stdin_pipe)) {
+      llvm::errs() << "Failed to create pipes for child process I/O\n";
+      return nullptr;
+    }
+    
     EPC = ExitOnError(
-        launchExecutor(OOPExecutor, UseSharedMemory, SlabAllocateSizeString));
+        launchExecutor(OOPExecutor, UseSharedMemory, SlabAllocateSizeString, 
+                      /*stdin_pipe[0]*/0, stdout_pipe[1], stderr_pipe[1]));
+
+    close(stdout_pipe[1]);
+    close(stderr_pipe[1]);
+    // close(stdin_pipe[1]);
+
+    m_child_stdout_fd = stdout_pipe[0];
+    m_child_stderr_fd = stderr_pipe[0];
+    // m_child_stdin_fd = stdin_pipe[1];
 
 #ifdef __APPLE__
     std::string OrcRuntimePath =
@@ -281,7 +303,6 @@ createClangInterpreter(std::vector<const char*>& args, bool outOfProcess) {
         "/build/lib/x86_64-unknown-linux-gnu/liborc_rt.a";
 #endif
     if (EPC) {
-
       CB.SetTargetTriple(EPC->getTargetTriple().getTriple());
       JB = ExitOnError(clang::Interpreter::createLLJITBuilder(std::move(EPC),
                                                               OrcRuntimePath));

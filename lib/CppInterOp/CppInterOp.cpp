@@ -3913,6 +3913,10 @@ int Undo(unsigned N) {
 pid_t GetExecutorPID() {
   return compat::getExecutorPID();
 }
+
+// void SendInputToChild(const std::string& input) {
+//   getInterp().sendInputToChild(input);
+// }
 #endif // CPPINTEROP_WITH_OOP_JIT
 
 } // end namespace Cpp
