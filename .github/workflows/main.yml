@@ -90,6 +90,15 @@ jobs:
             cppyy: Off
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
+          - name: ubu24-x86-gcc12-clang-repl-20-out-of-process
+            os: ubuntu-24.04
+            compiler: gcc-12
+            clang-runtime: '20'
+            cling: Off
+            cppyy: Off
+            llvm_enable_projects: "clang;compiler-rt"
+            llvm_targets_to_build: "host;NVPTX"
+            oop-jit: On
           - name: ubu24-x86-gcc12-clang-repl-19-cppyy
             os: ubuntu-24.04
             compiler: gcc-12
@@ -132,6 +141,15 @@ jobs:
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # MacOS Arm Jobs
+          - name: osx15-arm-clang-clang-repl-20-out-of-process
+            os: macos-15
+            compiler: clang
+            clang-runtime: '20'
+            cling: Off
+            cppyy: Off
+            llvm_enable_projects: "clang;compiler-rt"
+            llvm_targets_to_build: "host"
+            oop-jit: On
           - name: osx15-arm-clang-clang-repl-20
             os: macos-15
             compiler: clang
@@ -281,9 +299,9 @@ jobs:
       id: cache
       with:
         path: |
-          llvm-project
-          ${{ matrix.cling=='On' && 'cling' || '' }}
-        key: ${{ env.CLING_HASH }}-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-clang-${{ matrix.clang-runtime }}.x-patch-${{ hashFiles(format('patches/llvm/clang{0}-*.patch', matrix.clang-runtime)) || 'none' }}
+              llvm-project
+              ${{ matrix.cling=='On' && 'cling' || '' }}
+        key: ${{ env.CLING_HASH }}-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-clang-${{ matrix.clang-runtime }}.x-patch-${{ hashFiles(format('patches/llvm/clang{0}-*.patch', matrix.clang-runtime)) || 'none' }}${{ matrix.oop-jit == 'On' && '-oop' || '' }}
 
     - name: Setup default Build Type
       uses: ./.github/actions/Miscellaneous/Select_Default_Build_Type
@@ -299,14 +317,14 @@ jobs:
       with:
         cache-hit: ${{ steps.cache.outputs.cache-hit }}
 
-    - name: Cache LLVM-${{ matrix.clang-runtime }} and ${{ matrix.cling == 'On' && 'Cling' || 'Clang-REPL' }} build
-      uses: actions/cache/save@v4
-      if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-      with:
-        path: |
-          llvm-project
-          ${{ matrix.cling=='On' && 'cling' || '' }}
-        key: ${{ steps.cache.outputs.cache-primary-key }}
+    # - name: Cache LLVM-${{ matrix.clang-runtime }} and ${{ matrix.cling == 'On' && 'Cling' || 'Clang-REPL' }} build
+    #   uses: actions/cache/save@v4
+    #   if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+    #   with:
+    #     path: |
+    #       llvm-project
+    #       ${{ matrix.cling=='On' && 'cling' || '' }}
+    #     key: ${{ steps.cache.outputs.cache-primary-key }}
 
     - name: Setup code coverage
       if: ${{ success() && (matrix.coverage == true) }}

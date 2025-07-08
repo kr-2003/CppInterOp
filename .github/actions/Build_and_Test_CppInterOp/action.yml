@@ -23,6 +23,12 @@ runs:
         export CPPINTEROP_DIR="$CB_PYTHON_DIR/cppyy_backend"
 
         # Build CppInterOp next to cling and llvm-project.
+        if [[ "${{ matrix.oop-jit }}" == "On" ]]; then
+          if [[ -f VERSION ]]; then
+            sed -i.bak 's/1\.8\.0;dev/1.8.1;dev/' VERSION
+            rm -f VERSION.bak
+          fi
+        fi
         mkdir build && cd build
         export CPPINTEROP_BUILD_DIR=$PWD
         cling_on=$(echo "${{ matrix.cling }}" | tr '[:lower:]' '[:upper:]')
@@ -59,6 +65,9 @@ runs:
           os="${{ matrix.os }}"
           if [[ "${os}" != "macos"* ]]; then
             valgrind --show-error-list=yes --track-origins=yes --error-exitcode=1 unittests/CppInterOp/CppInterOpTests/unittests/bin/${{ env.BUILD_TYPE }}/CppInterOpTests
+          fi
+          if [[ "${{ matrix.oop-jit }}" == "On" ]]; then
+            ./unittests/CppInterOp/CppInterOpTests/unittests/bin/${{ env.BUILD_TYPE }}/CppInterOpTests --use-oop-jit
           fi
         fi
         echo "CB_PYTHON_DIR=$CB_PYTHON_DIR" >> $GITHUB_ENV
