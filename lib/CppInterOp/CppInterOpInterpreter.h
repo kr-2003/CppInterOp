@@ -39,6 +39,8 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/TargetParser/Triple.h"
 
+#include <fcntl.h>
+#include <unistd.h>
 #include <utility>
 #include <vector>
 
@@ -145,12 +147,40 @@ private:
 
   Interpreter(std::unique_ptr<clang::Interpreter> CI) : inner(std::move(CI)) {}
 
+  static void drainChildOutput() {
+    char buffer[4096];
+    ssize_t bytes_read;
+
+    if (compat::m_child_stdout_fd != -1) {
+      int flags = fcntl(compat::m_child_stdout_fd, F_GETFL, 0);
+      fcntl(compat::m_child_stdout_fd, F_SETFL, flags | O_NONBLOCK);
+
+      while ((bytes_read = read(compat::m_child_stdout_fd, buffer,
+                                sizeof(buffer))) > 0) {
+        fwrite(buffer, 1, bytes_read, stdout);
+      }
+      fflush(stdout);
+    }
+
+    if (compat::m_child_stderr_fd != -1) {
+      int flags = fcntl(compat::m_child_stderr_fd, F_GETFL, 0);
+      fcntl(compat::m_child_stderr_fd, F_SETFL, flags | O_NONBLOCK);
+
+      while ((bytes_read = read(compat::m_child_stderr_fd, buffer,
+                                sizeof(buffer))) > 0) {
+        fwrite(buffer, 1, bytes_read, stderr);
+      }
+      fflush(stderr);
+    }
+  }
+
 public:
   static std::unique_ptr<Interpreter>
   create(int argc, const char* const* argv, const char* llvmdir = nullptr,
          const std::vector<std::shared_ptr<clang::ModuleFileExtension>>&
              moduleExtensions = {},
-         void* extraLibHandle = nullptr, bool noRuntime = true) {
+         void* extraLibHandle = nullptr, bool noRuntime = true,
+         bool outOfProcess = false) {
     // Initialize all targets (required for device offloading)
     llvm::InitializeAllTargetInfos();
     llvm::InitializeAllTargets();
@@ -158,7 +188,7 @@ public:
     llvm::InitializeAllAsmPrinters();
 
     std::vector<const char*> vargs(argv + 1, argv + argc);
-    auto CI = compat::createClangInterpreter(vargs);
+    auto CI = compat::createClangInterpreter(vargs, outOfProcess);
     if (!CI) {
       llvm::errs() << "Interpreter creation failed\n";
       return nullptr;
@@ -186,15 +216,21 @@ public:
   }
 
   llvm::Expected<clang::PartialTranslationUnit&> Parse(llvm::StringRef Code) {
-    return inner->Parse(Code);
+    auto outputOrErr = inner->Parse(Code);
+    drainChildOutput();
+    return outputOrErr;
   }
 
   llvm::Error Execute(clang::PartialTranslationUnit& T) {
-    return inner->Execute(T);
+    auto outputOrErr = inner->Execute(T);
+    drainChildOutput();
+    return outputOrErr;
   }
 
   llvm::Error ParseAndExecute(llvm::StringRef Code, clang::Value* V = nullptr) {
-    return inner->ParseAndExecute(Code, V);
+    auto outputOrErr = inner->ParseAndExecute(Code, V);
+    drainChildOutput();
+    return outputOrErr;
   }
 
   llvm::Error Undo(unsigned N = 1) { return compat::Undo(*inner, N); }
@@ -462,6 +498,13 @@ public:
     }
     return kSuccess;
   }
+
+  // void sendInputToChild(const std::string& input) {
+  //   if (compat::m_child_stdin_fd != -1) {
+  //     write(compat::m_child_stdin_fd, input.c_str(), input.size());
+  //     write(compat::m_child_stdin_fd, "\n", 1);
+  //   }
+  // }
 
 }; // Interpreter
 } // namespace Cpp
