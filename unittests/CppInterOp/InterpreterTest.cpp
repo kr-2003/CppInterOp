@@ -17,16 +17,13 @@
 #include "clang-c/CXCppInterOp.h"
 
 #include "llvm/ADT/SmallString.h"
-#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/Path.h"
-#include "llvm/Support/raw_ostream.h"
+#include <llvm/Support/FileSystem.h>
 
 #include <gmock/gmock.h>
 #include "gtest/gtest.h"
 
 #include <algorithm>
-#include <cstdint>
-#include <thread>
 #include <utility>
 
 using ::testing::StartsWith;
@@ -276,7 +273,7 @@ TEST(InterpreterTest, DISABLED_DetectResourceDir) {
     GTEST_SKIP() << "Test not run (Clang binary does not exist)";
 
   std::string DetectedPath = Cpp::DetectResourceDir(Clang.str().str().c_str());
-  EXPECT_STREQ(DetectedPath.c_str(), Cpp::GetResourceDir(I));
+  EXPECT_STREQ(DetectedPath.c_str(), Cpp::GetResourceDir());
 }
 
 TEST(InterpreterTest, DetectSystemCompilerIncludePaths) {
@@ -387,14 +384,9 @@ TEST(InterpreterTest, ExternalInterpreterTest) {
 #endif
 }
 
-static int printf_jit(const char* format, ...) {
-  llvm::errs() << "printf_jit called!\n";
-  return 0;
-}
-
 TEST(InterpreterTest, MultipleInterpreter) {
-#ifdef EMSCRIPTEN
-  GTEST_SKIP() << "Test fails for Emscipten builds";
+#if CLANG_VERSION_MAJOR < 20 && defined(EMSCRIPTEN)
+  GTEST_SKIP() << "Test fails for Emscipten LLVM 20 builds";
 #endif
 #ifdef _WIN32
   GTEST_SKIP() << "Disabled on Windows. Needs fixing.";
