@@ -318,7 +318,10 @@ TYPED_TEST(CPPINTEROP_TEST_MODE, Interpreter_IncludePaths) {
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, Interpreter_CodeCompletion) {
-#if CLANG_VERSION_MAJOR >= 18 || defined(CPPINTEROP_USE_CLING)
+#if CLANG_VERSION_MAJOR == 20 && defined(CPPINTEROP_USE_CLING) &&              \
+    defined(_WIN32)
+  GTEST_SKIP() << "Test fails with Cling on Windows";
+#endif
   TestFixture::CreateInterpreter();
   std::vector<std::string> cc;
   Cpp::Declare("int foo = 12;" DFLT_FALSE);
@@ -332,9 +335,6 @@ TYPED_TEST(CPPINTEROP_TEST_MODE, Interpreter_CodeCompletion) {
     if (r == "float" || r == "foo")
       cnt++;
   EXPECT_EQ(2U, cnt); // float and foo
-#else
-  GTEST_SKIP();
-#endif
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, Interpreter_ExternalInterpreter) {

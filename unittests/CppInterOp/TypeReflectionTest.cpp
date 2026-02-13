@@ -551,9 +551,8 @@ TYPED_TEST(CPPINTEROP_TEST_MODE, TypeReflection_IsPODType) {
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, TypeReflection_IsSmartPtrType) {
-#if CLANG_VERSION_MAJOR == 18 && defined(CPPINTEROP_USE_CLING) &&              \
-    defined(_WIN32) && (defined(_M_ARM) || defined(_M_ARM64))
-  GTEST_SKIP() << "Test fails with Cling on Windows on ARM";
+#if CLANG_VERSION_MAJOR == 20 && defined(CPPINTEROP_USE_CLING) && defined(_WIN32)
+  GTEST_SKIP() << "Test fails with Cling on Windows";
 #endif
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";

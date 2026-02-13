@@ -48,21 +48,13 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-arm-gcc12-clang-repl-18
-            os: ubuntu-24.04-arm
-            compiler: gcc-12
-            clang-runtime: '18'
-            cling: Off
-            cppyy: Off
-            llvm_enable_projects: "clang"
-            llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-arm-gcc9-clang18-cling-cppyy
+          - name: ubu24-arm-gcc9-clang20-cling-cppyy
             os: ubuntu-24.04-arm
             compiler: gcc-9
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
             cppyy: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # Ubuntu X86 Jobs
@@ -112,21 +104,13 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-x86-gcc12-clang-repl-18
-            os: ubuntu-24.04
-            compiler: gcc-12
-            clang-runtime: '18'
-            cling: Off
-            cppyy: Off
-            llvm_enable_projects: "clang"
-            llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-x86-gcc9-clang18-cling-cppyy
+          - name: ubu24-x86-gcc9-clang20-cling-cppyy
             os: ubuntu-24.04
             compiler: gcc-9
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
             cppyy: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # MacOS Arm Jobs
@@ -163,21 +147,13 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host"
-          - name: osx26-arm-clang-clang-repl-18
+          - name: osx26-arm-clang-clang20-cling-cppyy
             os: macos-26
             compiler: clang
-            clang-runtime: '18'
-            cling: Off
-            cppyy: Off
-            llvm_enable_projects: "clang"
-            llvm_targets_to_build: "host"
-          - name: osx26-arm-clang-clang18-cling-cppyy
-            os: macos-26
-            compiler: clang
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
             cppyy: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # MacOS X86 Jobs
@@ -205,21 +181,13 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host"
-          - name: osx15-x86-clang-clang-repl-18
+          - name: osx15-x86-clang-clang20-cling-cppyy
             os: macos-15-intel
             compiler: clang
-            clang-runtime: '18'
-            cling: Off
-            cppyy: Off
-            llvm_enable_projects: "clang"
-            llvm_targets_to_build: "host"
-          - name: osx15-x86-clang-clang18-cling-cppyy
-            os: macos-15-intel
-            compiler: clang
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
             cppyy: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # Windows Arm Jobs
@@ -230,12 +198,12 @@ jobs:
             cling: Off
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: win11-msvc-clang18-cling
+          - name: win11-msvc-clang20-cling
             os: windows-11-arm
             compiler: msvc
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
           # Windows X86 Jobs
@@ -246,12 +214,12 @@ jobs:
             cling: Off
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: win2025-msvc-clang18-cling
+          - name: win2025-msvc-clang20-cling
             os: windows-2025
             compiler: msvc
-            clang-runtime: '18'
+            clang-runtime: '20'
             cling: On
-            cling-version: '1.2'
+            cling-version: '1.3'
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
 
@@ -347,6 +315,7 @@ jobs:
       uses: mxschmitt/action-tmate@v3
       # When debugging increase to a suitable value!
       timeout-minutes: 30
+
 
 
 

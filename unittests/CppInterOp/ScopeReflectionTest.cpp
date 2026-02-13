@@ -209,11 +209,6 @@ TYPED_TEST(CPPINTEROP_TEST_MODE, ScopeReflection_SizeOf) {
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, ScopeReflection_IsBuiltin) {
-#if CLANG_VERSION_MAJOR == 18 && defined(CPPINTEROP_USE_CLING) &&              \
-    defined(_WIN32) && (defined(_M_ARM) || defined(_M_ARM64))
-  GTEST_SKIP() << "Test fails with Cling on Windows on ARM";
-#endif
-
   // static std::set<std::string> g_builtins =
   // {"bool", "char", "signed char", "unsigned char", "wchar_t", "short", "unsigned short",
   //  "int", "unsigned int", "long", "unsigned long", "long long", "unsigned long long",
@@ -557,10 +552,6 @@ TYPED_TEST(CPPINTEROP_TEST_MODE, ScopeReflection_GetScopefromCompleteName) {
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, ScopeReflection_GetNamed) {
-#if CLANG_VERSION_MAJOR == 18 && defined(CPPINTEROP_USE_CLING) &&              \
-    defined(_WIN32) && (defined(_M_ARM) || defined(_M_ARM64))
-  GTEST_SKIP() << "Test fails with Cling on Windows on ARM";
-#endif
   std::string code = R"(namespace N1 {
                         namespace N2 {
                           class C {
@@ -928,11 +919,7 @@ template<class T> constexpr T pi = T(3.1415926535897932385L);
   auto* VD = cast<VarTemplateSpecializationDecl>((Decl*)Instance1);
   VarTemplateDecl* VDTD1 = VD->getSpecializedTemplate();
   EXPECT_TRUE(VDTD1->isThisDeclarationADefinition());
-#if CLANG_VERSION_MAJOR == 18
-  TemplateArgument TA1 = (*VD->getTemplateArgsInfo())[0].getArgument();
-#else
   TemplateArgument TA1 = (*VD->getTemplateArgsAsWritten())[0].getArgument();
-#endif // CLANG_VERSION_MAJOR
   EXPECT_TRUE(TA1.getAsType()->isIntegerType());
 }
 
@@ -959,10 +946,6 @@ template<typename T> T TrivialFnTemplate() { return T(); }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE,
            ScopeReflection_InstantiateTemplateFunctionFromString) {
-#if CLANG_VERSION_MAJOR == 18 && defined(CPPINTEROP_USE_CLING) &&              \
-    defined(_WIN32) && (defined(_M_ARM) || defined(_M_ARM64))
-  GTEST_SKIP() << "Test fails with Cling on Windows on ARM";
-#endif
   if (llvm::sys::RunningOnValgrind())
     GTEST_SKIP() << "XFAIL due to Valgrind report";
   std::vector<const char*> interpreter_args = {"-include", "new"};
@@ -1107,10 +1090,6 @@ TYPED_TEST(CPPINTEROP_TEST_MODE,
 }
 
 TYPED_TEST(CPPINTEROP_TEST_MODE, ScopeReflection_IncludeVector) {
-#if CLANG_VERSION_MAJOR == 18 && defined(CPPINTEROP_USE_CLING) &&              \
-    defined(_WIN32) && (defined(_M_ARM) || defined(_M_ARM64))
-  GTEST_SKIP() << "Test fails with Cling on Windows on ARM";
-#endif
   if (llvm::sys::RunningOnValgrind())
       GTEST_SKIP() << "XFAIL due to Valgrind report";
   std::string code = R"(
