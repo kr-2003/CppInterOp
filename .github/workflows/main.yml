@@ -48,9 +48,9 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-arm-gcc9-clang20-cling-cppyy
+          - name: ubu24-arm-gcc14-clang20-cling-cppyy
             os: ubuntu-24.04-arm
-            compiler: gcc-9
+            compiler: gcc-14
             clang-runtime: '20'
             cling: On
             cppyy: On
@@ -104,9 +104,9 @@ jobs:
             cppyy: On
             llvm_enable_projects: "clang"
             llvm_targets_to_build: "host;NVPTX"
-          - name: ubu24-x86-gcc9-clang20-cling-cppyy
+          - name: ubu24-x86-gcc14-clang20-cling-cppyy
             os: ubuntu-24.04
-            compiler: gcc-9
+            compiler: gcc-14
             clang-runtime: '20'
             cling: On
             cppyy: On
